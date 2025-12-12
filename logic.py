@@ -86,10 +86,10 @@ class Television:
         """
         return f'Power = {self.__status}, Channel = {self.__channel}, Volume = {self.__volume}'
 
-    def is_on(self): return self.__status
-    def is_muted(self): return self.__muted
-    def get_volume(self): return self.__volume
-    def get_channel(self): return self.__channel
+    def is_on(self) -> bool: return self.__status
+    def is_muted(self) -> bool: return self.__muted
+    def get_volume(self) -> int: return self.__volume
+    def get_channel(self) -> int: return self.__channel
 
 channel_images = {
     0: "espn_logo.png",
@@ -99,8 +99,14 @@ channel_images = {
 }
 
 class Logic(QtWidgets.QMainWindow, Ui_GUI_Project):
+    """
+    Method that connects GUI to the Television object.
+    """
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Initialize the GUI, and connect buttons/signals sets UI to initial state.
+        """
         super().__init__()
         self.setupUi(self)
 
@@ -118,33 +124,56 @@ class Logic(QtWidgets.QMainWindow, Ui_GUI_Project):
 
         self.update_ui()
 
-    def power(self):
+    def power(self) -> None:
+        """
+        Method that powers on/off the television object.
+        """
+
         self.tv.power()
         self.update_ui()
 
-    def channel_up(self):
+    def channel_up(self) -> None:
+        """
+        Method that channels up the television object.
+        """
         self.tv.channel_up()
         self.update_ui()
 
-    def channel_down(self):
+    def channel_down(self) -> None:
+        """
+        Method that channels down the television object.
+        """
         self.tv.channel_down()
         self.update_ui()
 
-    def volume_up(self):
+    def volume_up(self) -> None:
+        """
+        Method that increases volume of the television object by 1.
+        """
         self.tv.volume_up()
         self.volume_slider.setValue(self.tv.get_volume())
         self.update_ui()
 
-    def volume_down(self):
+    def volume_down(self) -> None:
+        """
+        Method that decreases volume of the television object by 1.
+        """
         self.tv.volume_down()
         self.volume_slider.setValue(self.tv.get_volume())
         self.update_ui()
 
-    def mute(self):
+    def mute(self) -> None:
+        """
+        Method that mutes/unmutes the television object.
+        """
         self.tv.mute()
         self.update_ui()
 
-    def slider_changed(self,value):
+    def slider_changed(self,value) -> None:
+        """
+        Method that adjusts volume of television object.
+        :param value: Value on the slider.
+        """
         if not self.tv.is_on():
             self.volume_slider.setValue(self.tv.get_volume())
             return
@@ -156,12 +185,15 @@ class Logic(QtWidgets.QMainWindow, Ui_GUI_Project):
 
         self.update_ui()
 
-    def update_ui(self):
+    def update_ui(self) -> None:
+        """
+        Method that updates the GUI. Disables buttons when power is off.
+        """
         if not self.tv.is_on():
             self.channel_image.clear()
             self.channel_lcd.display(0)
 
-            for w in [
+            for widget in [
                 self.channel_up_button,
                 self.channel_down_button,
                 self.volume_up_button,
@@ -169,12 +201,12 @@ class Logic(QtWidgets.QMainWindow, Ui_GUI_Project):
                 self.mute_button,
                 self.volume_slider,
             ]:
-                w.setEnabled(False)
+                widget.setEnabled(False)
 
             self.mute_label.setStyleSheet("color:white;")
             return
 
-        for w in [
+        for widget in [
             self.channel_up_button,
             self.channel_down_button,
             self.volume_up_button,
@@ -182,7 +214,7 @@ class Logic(QtWidgets.QMainWindow, Ui_GUI_Project):
             self.mute_button,
             self.volume_slider,
         ]:
-            w.setEnabled(True)
+            widget.setEnabled(True)
 
         chan = self.tv.get_channel()
         self.channel_lcd.display(chan)
